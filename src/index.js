@@ -13,7 +13,10 @@ const adminRouter = require("./Routes/adminUserRoutes")
 const cors = require("cors");
 
 app.use(cors({
-    origin: "http://localhost:5173",
+   origin: [
+    "http://localhost:5173",
+    "https://coding-platform-phi.vercel.app"
+  ],
     credentials: true
 }))
 
