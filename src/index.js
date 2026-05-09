@@ -117,18 +117,8 @@ const aiRouter = require("./Routes/aiAssistant");
 const videoRouter = require("./Routes/videoCreator");
 const adminRouter = require("./Routes/adminUserRoutes");
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://coding-platform-phi.vercel.app",
-];
-
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
+  res.setHeader("Access-Control-Allow-Origin", "https://coding-platform-phi.vercel.app");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -147,6 +137,26 @@ app.get("/", (req, res) => {
   res.send("CodeBit Backend is running");
 });
 
+let isConnected = false;
+
+app.use(async (req, res, next) => {
+  try {
+    if (!isConnected) {
+      await main();
+      isConnected = true;
+    }
+    next();
+  } catch (err) {
+    console.log("DB ERROR:", err.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+      error: err.message,
+    });
+  }
+});
+
 app.use("/user", authRouter);
 app.use("/problem", problemRouter);
 app.use("/submission", submitRouter);
@@ -154,27 +164,4 @@ app.use("/ai", aiRouter);
 app.use("/video", videoRouter);
 app.use("/admin", adminRouter);
 
-let isConnected = false;
-
-module.exports = async (req, res) => {
-  try {
-    if (!isConnected) {
-      await main();
-
-      // Redis ko abhi comment rakho, warna Vercel crash kar sakta hai
-      // await redisClient.connect();
-
-      isConnected = true;
-    }
-
-    return app(req, res);
-  } catch (err) {
-    console.log("SERVER ERROR:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: "Server crashed",
-      error: err.message,
-    });
-  }
-};
+module.exports = app;
