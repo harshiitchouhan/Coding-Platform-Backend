@@ -12,14 +12,33 @@ const videoRouter = require("./Routes/videoCreator")
 const adminRouter = require("./Routes/adminUserRoutes")
 const cors = require("cors");
 
-app.use(cors({
-   origin: [
-    "http://localhost:5173",
-    "https://coding-platform-phi.vercel.app"
-  ],
-    credentials: true
-}))
+// app.use(cors({
+//    origin: [
+//     "http://localhost:5173",
+//     "https://coding-platform-phi.vercel.app"
+//   ],
+//     credentials: true
+// }))
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://coding-platform-phi.vercel.app",
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
+app.options("*", cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
+
+app.get("/", (req, res) => {
+  res.send("CodeBit Backend is running ");
+});
 
 
 app.use(express.json());
@@ -32,9 +51,7 @@ app.use("/ai",aiRouter)
 app.use("/video",videoRouter);
 app.use("/admin",adminRouter)
 
-app.get("/", (req, res) => {
-  res.send("CodeBit Backend is running ");
-});
+
 
  const InitializeConnection = async()=>{
 
