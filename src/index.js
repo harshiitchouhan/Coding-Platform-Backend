@@ -117,11 +117,19 @@ const aiRouter = require("./Routes/aiAssistant");
 const videoRouter = require("./Routes/videoCreator");
 const adminRouter = require("./Routes/adminUserRoutes");
 
+const FRONTEND_URL = "https://coding-platform-phi.vercel.app";
+
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://coding-platform-phi.vercel.app");
+  res.setHeader("Access-Control-Allow-Origin", FRONTEND_URL);
   res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -144,7 +152,9 @@ app.use(async (req, res, next) => {
     if (!isConnected) {
       await main();
       isConnected = true;
+      console.log("MongoDB connected");
     }
+
     next();
   } catch (err) {
     console.log("DB ERROR:", err.message);
