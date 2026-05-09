@@ -29,6 +29,10 @@ app.use("/ai",aiRouter)
 app.use("/video",videoRouter);
 app.use("/admin",adminRouter)
 
+app.get("/", (req, res) => {
+  res.send("CodeBit Backend is running ");
+});
+
  const InitializeConnection = async()=>{
 
     try{
