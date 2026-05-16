@@ -95,6 +95,20 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use(async (req, res, next) => {
+  try {
+    await main();
+    next();
+  } catch (err) {
+    console.log("DB middleware error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+      error: err.message,
+    });
+  }
+});
+
 app.use("/user", authRouter);
 app.use("/problem", problemRouter);
 app.use("/submission", submitRouter);
@@ -105,7 +119,7 @@ app.use("/contest", contestRouter);
 
 const InitializeConnection = async () => {
   try {
-    await main();
+    
 
     if (!redisClient.isOpen) {
       await redisClient.connect();
