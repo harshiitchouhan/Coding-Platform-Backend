@@ -83,6 +83,14 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "CodeBit backend is running 🚀",
+  });
+});
+
 app.use("/user", authRouter);
 app.use("/problem", problemRouter);
 app.use("/submission", submitRouter);
