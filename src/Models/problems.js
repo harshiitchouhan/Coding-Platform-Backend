@@ -23,7 +23,7 @@ const problemSchema = new Schema({
 
     category:{
         type:String,
-        enum:["array" ,"linkedList" ,"graph" ,"dp" ,"string" , "tree", "math"],
+        enum:["array" ,"linkedList" ,"graph" ,"dp" ,"string" , "tree", "math","stack" ,"queue","matrix"],
         required:true
     },
 

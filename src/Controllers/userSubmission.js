@@ -1,5 +1,7 @@
 const Submission = require("../Models/submission");
 const Problem = require("../Models/problems");
+const Contest = require("../Models/contest")
+const ContestSubmission = require("../Models/contestSubmission");
 const {getLanguageById , submitBatch , submitToken} = require("../Utils/problemUtil")
 const wrapCode = require("../Utils/wrapCode");
 
@@ -126,6 +128,8 @@ const submitCode = async(req,res)=>{
             req.result.problemSolved.push(problemId);
             await req.result.save(); //save DB
         }
+
+        
 
         res.status(201).send(submitResult);
                 

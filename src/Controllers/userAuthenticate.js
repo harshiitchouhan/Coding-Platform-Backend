@@ -52,10 +52,12 @@ const register = async(req,res)=>{
 
         res.cookie("token", token, {
         maxAge: 24 * 60 * 60 * 1000, //1 day 
-        httpOnly: true,
-        sameSite: "none",
         secure: true,
-        path: "/",
+        sameSite: "none",
+        // httpOnly: true,
+        // sameSite: "none",
+        // secure: true,
+        // path: "/",
         // httpOnly: true,
         // sameSite: "lax",
         // secure: false, // dev only
@@ -130,10 +132,12 @@ const login = async(req,res)=>{
 
         res.cookie("token", token, {
         maxAge: 24 * 60 * 60 * 1000, //1 day 
-        httpOnly: true,
-        sameSite: "none",
         secure: true,
-        path: "/",
+        sameSite: "none",
+        // httpOnly: true,
+        // sameSite: "none",
+        // secure: true,
+        // path: "/",
         // sameSite: "lax",
         // secure: false, // dev only
         // path: "/",
@@ -212,7 +216,7 @@ const adminRegister = async(req,res)=>{
 
         // token creation                                                  // role:'admin  
         const token = jwt.sign({ _id: newUser._id, email: newUser.email , role:newUser.role} ,process.env.SECRET_KEY, {expiresIn:60*60});
-        res.cookie("token",token,{maxAge: 60*60*1000, httpOnly:true});
+        res.cookie("token",token,{maxAge: 60*60*1000, httpOnly:true , secure: true,sameSite: "none"});
         res.status(201).send("User Registered Succesfully");
         
  
