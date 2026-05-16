@@ -172,38 +172,71 @@ const login = async(req,res)=>{
     }
 }
 
-const logout = async (req,res)=>{
+// const logout = async (req,res)=>{
    
-    try{
-        // valid token hai ya nhi (validate) = user middleware krega
+//     try{
+//         // valid token hai ya nhi (validate) = user middleware krega
         
-        const {token} = req.cookies;  // token nikala
-        const payload = jwt.decode(token); // payload nikala 
+//         const {token} = req.cookies;  // token nikala
+//         const payload = jwt.decode(token); // payload nikala 
 
-        // add token to redis block list 
-        // redis db mei token dala with key value pair
-        await redisClient.set(`token:${token}`,'Blocked');
-        // redis ke ander kab expire hoga token
-        await redisClient.expireAt(`token:${token}`,payload.exp);
+//         // add token to redis block list 
+//         // redis db mei token dala with key value pair
+//         await redisClient.set(`token:${token}`,'Blocked');
+//         // redis ke ander kab expire hoga token
+//         await redisClient.expireAt(`token:${token}`,payload.exp);
 
-        // cookies clear krdo   
-        res.cookie("token", null, {
-          expires: new Date(Date.now()),
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-          path: "/",
-        });
-        res.send("Logged Out Successfully");
-    }
+//         // cookies clear krdo   
+//         res.cookie("token", null, {
+//           expires: new Date(Date.now()),
+//           httpOnly: true,
+//           secure: true,
+//           sameSite: "none",
+//           path: "/",
+//         });
+//         res.send("Logged Out Successfully");
+//     }
     
-    catch(err){
-      res.status(400).json({
-      success: false,
-      message: err.message
-    });
+//     catch(err){
+//       res.status(400).json({
+//       success: false,
+//       message: err.message
+//     });
+//     }
+// }
+
+const logout = async (req, res) => {
+  try {
+    const { token } = req.cookies;
+
+    if (token) {
+      const payload = jwt.decode(token);
+
+      if (payload?.exp) {
+        await redisClient.set(`token:${token}`, "Blocked");
+        await redisClient.expireAt(`token:${token}`, payload.exp);
+      }
     }
-}
+
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged Out Successfully",
+    });
+  } catch (err) {
+    return res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 
 const adminRegister = async(req,res)=>{
     try {
