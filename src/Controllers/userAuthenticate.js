@@ -216,7 +216,7 @@ const adminRegister = async(req,res)=>{
 
         // token creation                                                  // role:'admin  
         const token = jwt.sign({ _id: newUser._id, email: newUser.email , role:newUser.role} ,process.env.SECRET_KEY, {expiresIn:60*60});
-        res.cookie("token",token,{maxAge: 60*60*1000, httpOnly:true , secure: true,sameSite: "none" , path="/"});
+        res.cookie("token",token,{maxAge: 60*60*1000, httpOnly:true , secure: true,sameSite: "none" , path:"/"});
         res.status(201).send("User Registered Succesfully");
         
  
