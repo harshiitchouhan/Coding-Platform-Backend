@@ -187,7 +187,13 @@ const logout = async (req,res)=>{
         await redisClient.expireAt(`token:${token}`,payload.exp);
 
         // cookies clear krdo   
-        res.cookie("token",null,{expires: new Date(Date.now())} );
+        res.cookie("token", null, {
+          expires: new Date(Date.now()),
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          path: "/",
+        });
         res.send("Logged Out Successfully");
     }
     
