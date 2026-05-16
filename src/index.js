@@ -111,7 +111,7 @@ const InitializeConnection = async () => {
       await redisClient.connect();
     }
 
-    console.log("Connected To DB and Redis");
+    console.log("Connected to Redis");
 
     if (process.env.NODE_ENV !== "production") {
       app.listen(process.env.PORT || 4000, () => {

@@ -8,9 +8,7 @@ async function main() {
     if (!process.env.DB_KEY) {
       throw new Error("DB_KEY is missing");
     }
-
-    console.log("Connecting to MongoDB...");
-
+    
     await mongoose.connect(process.env.DB_KEY, {
       serverSelectionTimeoutMS: 10000,
     });
