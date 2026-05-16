@@ -218,10 +218,19 @@ const logout = async (req, res) => {
       }
     }
 
+    // clear production cookie
     res.clearCookie("token", {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      path: "/",
+    });
+
+    // clear old local/dev cookie if it exists
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
       path: "/",
     });
 
