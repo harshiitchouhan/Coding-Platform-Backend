@@ -189,10 +189,6 @@ const login = async(req,res)=>{
 //         // cookies clear krdo   
 //         res.cookie("token", null, {
 //           expires: new Date(Date.now()),
-//           httpOnly: true,
-//           secure: true,
-//           sameSite: "none",
-//           path: "/",
 //         });
 //         res.send("Logged Out Successfully");
 //     }
@@ -204,6 +200,8 @@ const login = async(req,res)=>{
 //     });
 //     }
 // }
+
+// Vercel
 
 const logout = async (req, res) => {
   try {

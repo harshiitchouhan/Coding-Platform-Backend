@@ -506,6 +506,7 @@ const getContestLeaderboard = async (req, res) => {
   try {
     const { contestId } = req.params;
 
+    // contest info le aaye
     const contest = await Contest.findById(contestId)
       .select("title startTime endTime problems")
       .populate({
@@ -520,6 +521,7 @@ const getContestLeaderboard = async (req, res) => {
       });
     }
 
+    // jitne total submissions hai wo isme aayega(all users)
     const submissions = await ContestSubmission.find({ contestId })
       .populate({
         path: "userId",
@@ -527,18 +529,24 @@ const getContestLeaderboard = async (req, res) => {
       })
       .sort({ createdAt: 1 });
 
+
+    // p1:100points iss format mei convert krne ke liye ye use kia h 
+    // point problem to points
     const problemPointsMap = {};
 
     contest.problems.forEach((item) => {
       problemPointsMap[item.problem._id.toString()] = item.points || 0;
     });
 
+    // isko user and problem dono se map krne ke liye use kra hai 
     const leaderboardMap = {};
 
     for (const sub of submissions) {
       const userId = sub.userId._id.toString();
       const problemId = sub.problemId.toString();
 
+      // agar kisi user ne submit kia then wo leader board se connect hoga isse
+      
       if (!leaderboardMap[userId]) {
         leaderboardMap[userId] = {
           user: {
@@ -555,8 +563,11 @@ const getContestLeaderboard = async (req, res) => {
         };
       }
 
+      //leaderboardMap ke andar iss user ka data nikalo
       const userRow = leaderboardMap[userId];
 
+      //Agar iss user ne iss problem par pehli baar submission kiya hai,
+      //toh iss problem ka record create karo.
       if (!userRow.problems[problemId]) {
         userRow.problems[problemId] = {
           solved: false,
@@ -598,17 +609,24 @@ const getContestLeaderboard = async (req, res) => {
       }
     }
 
+    // object pr sort thodi kr skte
+    //array mei convert kiya then sort
     let leaderboard = Object.values(leaderboardMap);
 
     leaderboard.sort((a, b) => {
+
+      // pehle points ke basis pr
       if (b.totalPoints !== a.totalPoints) {
         return b.totalPoints - a.totalPoints;
       }
 
+      // if tie then penality ke basis pr
       if (a.totalPenalty !== b.totalPenalty) {
         return a.totalPenalty - b.totalPenalty;
       }
 
+      // Jis user ka koi accepted submission nahi hai,
+      // wo accepted wale user ke neeche jayega.
       if (!a.lastAcceptedAt && !b.lastAcceptedAt) return 0;
       if (!a.lastAcceptedAt) return 1;
       if (!b.lastAcceptedAt) return -1;
