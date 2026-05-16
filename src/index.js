@@ -105,24 +105,23 @@ app.use("/contest", contestRouter);
 
 const InitializeConnection = async () => {
   try {
-    await Promise.all([
-      main(),
-      redisClient.connect(),
-    ]);
+    await main();
 
-    console.log("Connected To DB");
+    if (!redisClient.isOpen) {
+      await redisClient.connect();
+    }
+
+    console.log("Connected To DB and Redis");
 
     if (process.env.NODE_ENV !== "production") {
       app.listen(process.env.PORT || 4000, () => {
         console.log(
-          "Listening at Port No " +
-            (process.env.PORT || 4000)
+          "Listening at Port No " + (process.env.PORT || 4000)
         );
       });
     }
-
   } catch (err) {
-    console.log(err);
+    console.log("Connection error:", err);
   }
 };
 
