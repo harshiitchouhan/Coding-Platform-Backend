@@ -120,7 +120,7 @@ app.use("/contest", contestRouter);
 const InitializeConnection = async () => {
   try {
     
-    // await main();  // for localhost
+    await main();  // for localhost
 
     if (!redisClient.isOpen) {
       await redisClient.connect();
