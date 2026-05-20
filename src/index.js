@@ -65,8 +65,10 @@ const aiRouter = require("./Routes/aiAssistant");
 const videoRouter = require("./Routes/videoCreator");
 const adminRouter = require("./Routes/adminUserRoutes");
 const contestRouter = require("./Routes/contestRoutes");
-
+const googleRouter = require("./Routes/googleRoute");
+const passport = require("./config/passport");
 const cors = require("cors");
+
 
 
 const allowedOrigins = [
@@ -86,6 +88,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(passport.initialize());
 
 
 app.get("/", (req, res) => {
@@ -116,6 +119,7 @@ app.use("/ai", aiRouter);
 app.use("/video", videoRouter);
 app.use("/admin", adminRouter);
 app.use("/contest", contestRouter);
+app.use("/auth",googleRouter)
 
 const InitializeConnection = async () => {
   try {

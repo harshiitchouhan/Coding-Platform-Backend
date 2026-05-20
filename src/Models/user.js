@@ -54,10 +54,18 @@ const userSchema = new Schema({
         default: "",
         },
 
-    password : {
-        type : String,
-        required : true,
+    googleId: {
+      type: String,
+      default: null,
+    },
 
+    password: {
+      type: String,
+
+      // required only for normal signup
+      required: function () {
+        return !this.googleId;
+      },
     },
     
     role:{

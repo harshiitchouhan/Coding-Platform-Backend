@@ -114,6 +114,14 @@ const login = async(req,res)=>{
             message: "Your account has been banned",
           });
         }
+
+        if (!user.password) {
+          return res.status(400).json({
+            success: false,
+            message: "This account was created with Google. Please login with Google.",
+          });
+        }
+        
         const match = await bcrypt.compare(password , user.password);
 
         if(!match)

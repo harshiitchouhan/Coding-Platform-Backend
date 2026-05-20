@@ -72,12 +72,14 @@ authRouter.get("/me", async (req, res) => {
     }
 
     const user = await User.findById(_id).select("-password"); 
+    
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     res.json({ user }); //
+    // console.log("ME USER:", user);
   } catch (err) {
     // console.log(err.message); 
     res.status(401).json({ message: "Invalid token" });
