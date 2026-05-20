@@ -94,7 +94,6 @@ const login = async(req,res)=>{
     
     try {
 
-        // we mapped emailId :eemail and FirstName to name
         const {email , password} = req.body;
         
         if(!email)

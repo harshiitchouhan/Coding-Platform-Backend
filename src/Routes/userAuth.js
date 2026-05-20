@@ -15,7 +15,7 @@ authRouter.post("/register" , register);
 authRouter.post("/login" , login);
 
 // Logout
-authRouter.post("/logout", userMiddleware , logout);
+authRouter.post("/logout", logout);
 
 //register admin
 authRouter.post("/admin/register" , adminMiddleware, adminRegister);
