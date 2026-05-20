@@ -101,12 +101,17 @@ app.get("/", (req, res) => {
 app.use(async (req, res, next) => {
   try {
     await main();
+
+    if (!redisClient.isOpen) {
+      await redisClient.connect();
+    }
+
     next();
   } catch (err) {
-    console.log("DB middleware error:", err.message);
+    console.log("Connection middleware error:", err.message);
     res.status(500).json({
       success: false,
-      message: "Database connection failed",
+      message: "Server connection failed",
       error: err.message,
     });
   }
