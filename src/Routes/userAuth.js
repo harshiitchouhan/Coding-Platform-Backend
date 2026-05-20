@@ -41,7 +41,7 @@ authRouter.delete("/deleteImage",userMiddleware,removeProfileImage);
 //Check-Auth :- Called Automatically whenever someone comes to our website(get info from tokens which is handled by web rowser)
 authRouter.get("/check",userMiddleware,(req,res)=>{
     const reply ={
-        FirstName : req.result.FirstName,
+        name : req.result.name,
         emailId : req.result.emailId,
         _id : req.result._id,
         role: user.role
@@ -63,9 +63,11 @@ authRouter.get("/me", async (req, res) => {
     if (!token) {
       return res.status(401).json({ message: "Token doesn't exist" });
     }
+    console.log("Token:", token);
 
     const payload = jwt.verify(token, process.env.SECRET_KEY);
     const { _id } = payload;
+    console.log("Payload:", payload);
 
     if (!_id) {
       return res.status(401).json({ message: "Invalid token" });
@@ -80,6 +82,7 @@ authRouter.get("/me", async (req, res) => {
 
     res.json({ user }); //
     // console.log("ME USER:", user);
+    console.log(req.cookies);
   } catch (err) {
     // console.log(err.message); 
     res.status(401).json({ message: "Invalid token" });
