@@ -58,7 +58,7 @@ const app = express();
 const main = require("./config/database");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./Routes/userAuth");
-const redisClient = require("./config/redis");
+const { redisClient, connectRedis } = require("./config/redis");
 const problemRouter = require("./Routes/problemCreator");
 const submitRouter = require("./Routes/submitCode");
 const aiRouter = require("./Routes/aiAssistant");
@@ -123,20 +123,15 @@ app.use("/auth",googleRouter)
 
 const InitializeConnection = async () => {
   try {
-    
-    await main();  // for localhost
+    await main();
 
-    if (!redisClient.isOpen) {
-      await redisClient.connect();
-    }
+    await connectRedis();
 
     console.log("Connected to Redis");
 
     if (process.env.NODE_ENV !== "production") {
       app.listen(process.env.PORT || 4000, () => {
-        console.log(
-          "Listening at Port No " + (process.env.PORT || 4000)
-        );
+        console.log("Listening at Port No " + (process.env.PORT || 4000));
       });
     }
   } catch (err) {

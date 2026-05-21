@@ -1,5 +1,4 @@
-const redisClient = require("../config/redis");
-
+const { redisClient } = require("../config/redis");
 const submitLimiter = async(req,res,next)=>{
     const userId = req.result._id;
     const redisKey = `submit_cooldown:${userId}`;
