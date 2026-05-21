@@ -18,7 +18,7 @@ passport.use(
       try {
 
         // your logic here
-        console.log(profile);
+        // console.log(profile);
         let user = await User.findOne({
           email: profile.emails[0].value,
         });
