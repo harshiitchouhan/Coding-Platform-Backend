@@ -41,5 +41,3 @@ const checkContestAccess = async (req, res, next) => {
 };
 
 module.exports = checkContestAccess;
-
-module.exports = checkContestAccess;
