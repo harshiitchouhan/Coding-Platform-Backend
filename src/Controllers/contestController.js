@@ -535,6 +535,7 @@ const getContestLeaderboard = async (req, res) => {
     const problemPointsMap = {};
 
     contest.problems.forEach((item) => {
+      if (!item.problem) return;
       problemPointsMap[item.problem._id.toString()] = item.points || 0;
     });
 
@@ -542,6 +543,15 @@ const getContestLeaderboard = async (req, res) => {
     const leaderboardMap = {};
 
     for (const sub of submissions) {
+      if (!sub.userId) {
+        console.log("Missing user for submission:", sub._id);
+        continue;
+      }
+
+      if (!sub.problemId) {
+        console.log("Missing problem for submission:", sub._id);
+        continue;
+      }
       const userId = sub.userId._id.toString();
       const problemId = sub.problemId.toString();
 
