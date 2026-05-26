@@ -5,7 +5,7 @@ const User = require("../Models/user");
 const userMiddleware = async(req,res,next)=>{
     try{
 
-        console.log("ORIGIN:", req.headers.origin);
+    console.log("ORIGIN:", req.headers.origin);
     console.log("COOKIES:", req.cookies);
     console.log("TOKEN:", req.cookies?.token);
 
@@ -45,6 +45,9 @@ const userMiddleware = async(req,res,next)=>{
 //         });
 // }
 
+        if (!redisClient.isOpen) {
+            await redisClient.connect();
+        }
         // while logging out usko block list mei dala taaki koi jwt token save bhi kra ho to login na krpaye // check logout feature
         const isBlocked = await redisClient.exists(`token:${token}`);
 

@@ -129,7 +129,7 @@ const login = async(req,res)=>{
 
         //token creation
         // const token = jwt.sign({ _id: user._id, email: user.email , role:user.role} ,process.env.SECRET_KEY, {expiresIn:60*60});
-        // res.cookie("token",token,{maxAge: 60*60*1000, httpOnly:true , sameSite: "lax", secure: false,     // 🔥 REQUIRED (dev only)
+        // res.cookie("token",token,{maxAge: 60*60*1000, httpOnly:true , sameSite: "lax", secure: false,     // REQUIRED (dev only)
         // path: "/" });
          const token = jwt.sign(
         { _id: user._id, email: user.email, role: user.role },
