@@ -74,6 +74,7 @@ const cors = require("cors");
 const allowedOrigins = [
   "http://localhost:5173",
   "https://coding-platform-khaki.vercel.app",
+  "https://codebit-dev.vercel.app"
 ];
 
 app.use(cors({
