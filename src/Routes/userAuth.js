@@ -7,7 +7,7 @@ const adminMiddleware = require("../Middleware/adminMiddleware");
 const {signupLimiter,verifyOtpLimiter} = require('../Middleware/signupLimmiter');
 const User = require("../Models/user")
 const jwt = require("jsonwebtoken");
-const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../Utils/sendEmail");
 
 
 // Register
