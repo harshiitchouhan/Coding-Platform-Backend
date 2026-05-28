@@ -69,10 +69,25 @@ const register = async(req,res)=>{
               await userExist.save();
 
               await sendEmail(
-                userExist.email,
-                "Verify your CodeBit email",
-                `Your CodeBit OTP is ${otp}. It will expire in 10 minutes.`
-              );
+              email,
+              "CodeBit Email Verification",
+              `
+            Hi ${name},
+
+            Welcome to CodeBit 🚀
+
+            Use the OTP below to verify your email address:
+
+            ${otp}
+
+            ⏳ This code will expire in 10 minutes.
+
+            If you did not request this, please ignore this email.
+
+            Happy Coding 💻
+            Team CodeBit
+              `
+            );
 
               return res.status(200).json({
                 success: true,
@@ -255,11 +270,11 @@ const verifyEmail = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
-      // sameSite: "none",
-      // secure: true,
+      sameSite: "none",
+      secure: true,
       // dev
-        sameSite: "lax",
-        secure: false,
+        // sameSite: "lax",
+        // secure: false,
       path: "/",
     });
 
@@ -362,11 +377,10 @@ const login = async(req,res)=>{
         res.cookie("token", token, {
         maxAge: 24 * 60 * 60 * 1000, //1 day 
         httpOnly: true,
-        // sameSite: "none", // pro
-        // secure: true,
-        // path: "/",
-        sameSite: "lax",
-        secure: false, // dev only
+        sameSite: "none", // pro
+        secure: true,
+        // sameSite: "lax",
+        // secure: false, // dev only
         path: "/",
         });
 
