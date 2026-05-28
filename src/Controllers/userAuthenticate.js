@@ -6,6 +6,32 @@ const { redisClient } = require("../config/redis");
 const Submission = require("../Models/submission");
 const Problem = require("../Models/problems")
 const cloudinary = require("cloudinary").v2;
+const sendEmail = require("../Utils/sendEmail")
+const crypto = require("crypto")
+
+
+// Email Otp Generation
+const generateOtp = () => {
+  return crypto.randomInt(100000, 999999).toString();
+};
+
+// 1 otp in 1 min
+const checkOtpCooldown = async (email) => {
+  const key = `otp_cooldown:${email}`;
+
+  const ttl = await redisClient.ttl(key);
+
+  if (ttl > 0) {
+    return ttl;
+  }
+
+  await redisClient.set(key, "active", {
+    EX: 60,
+    NX: true,
+  });
+
+  return 0;
+};
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -22,14 +48,59 @@ const register = async(req,res)=>{
 
          const userExist = await User.findOne({ email });
 
-        if (userExist) {
-        return res.status(400).json({
-            success: false,
-            message: "Email already registered",
-        });
+          if (userExist) {
+            if (!userExist.isVerified) {
+
+              const cooldown = await checkOtpCooldown(userExist.email);
+
+              if (cooldown > 0) {
+                return res.status(429).json({
+                  success: false,
+                  message: `Please wait ${cooldown}s before requesting another OTP`,
+                  retryAfter: cooldown,
+                });
+              }
+              const otp = generateOtp();
+
+              
+              userExist.emailOtp = await bcrypt.hash(String(otp), 10);
+              userExist.emailOtpExpires = Date.now() + 10 * 60 * 1000;
+
+              await userExist.save();
+
+              await sendEmail(
+                userExist.email,
+                "Verify your CodeBit email",
+                `Your CodeBit OTP is ${otp}. It will expire in 10 minutes.`
+              );
+
+              return res.status(200).json({
+                success: true,
+                message: "If this email is new, you can register.",
+                email: userExist.email,
+              });
+            }
+
+            return res.status(400).json({
+              success: false,
+              message: "Email already registered",
+            });
         }
+
+         const cooldown = await checkOtpCooldown(email);
+          if (cooldown > 0) {
+            return res.status(429).json({
+              success: false,
+              message: `Please wait ${cooldown}s before requesting another OTP`,
+              retryAfter: cooldown,
+            });
+          }
+
         // Hash the password to maintain integrety saftey
         const hashedPassword = await bcrypt.hash(password,10);
+
+        // otp email
+        const otp = generateOtp();
 
         //admin ho ya user usse user ki tarah register karayenge
         // req.body.role = 'user';
@@ -40,54 +111,171 @@ const register = async(req,res)=>{
         name,
         email,
         password: hashedPassword,
-        role: "user"
+        role: "user",
+        isVerified: false,
+        emailOtp: await bcrypt.hash(String(otp), 10),
+        emailOtpExpires: Date.now() + 10 * 60 * 1000,
         });
 
-        // token creation
-       const token = jwt.sign(
-        { _id: newUser._id, email: newUser.email, role: "user" },
-        process.env.SECRET_KEY,
-        { expiresIn: "1d" } // 1 day
+        
+        await sendEmail(
+          email,
+          "Verify your CodeBit email",
+          `Your CodeBit OTP is ${otp}. It will expire in 10 minutes.`
         );
 
-        res.cookie("token", token, {
-        maxAge: 24 * 60 * 60 * 1000, //1 day 
-        // secure: true,
-        // sameSite: "none",
-        httpOnly: true,
-        sameSite: "none",
-        secure: true,
-        path: "/",
-        // httpOnly: true,
-        // sameSite: "lax",
-        // secure: false, // dev only
-        // path: "/",
-        });
+        return res.status(201).json({
+          success: true,
+          message: "Registered successfully. OTP sent to your email.",
+          email: newUser.email,
+          });
 
-        const reply = {
-            name : newUser.name,
-            email : newUser.email,
-            _id : newUser._id,
-            profileImage: newUser.profileImage
+        // token creation
+      //  const token = jwt.sign(
+      //   { _id: newUser._id, email: newUser.email, role: "user" },
+      //   process.env.SECRET_KEY,
+      //   { expiresIn: "1d" } // 1 day
+      //   );
 
-        }
+      //   res.cookie("token", token, {
+      //   maxAge: 24 * 60 * 60 * 1000, //1 day 
+      //   // secure: true,
+      //   // sameSite: "none",
+      //   httpOnly: true,
+      //   sameSite: "none",
+      //   secure: true,
+      //   path: "/",
+      //   // httpOnly: true,
+      //   // sameSite: "lax",
+      //   // secure: false, // dev only
+      //   // path: "/",
+      //   });
 
-        res.status(201).json(
-            {
-                user : reply,
-                message : "Registered Suceesfully"
-            }
-        )
+        // const reply = {
+        //     name : newUser.name,
+        //     email : newUser.email,
+        //     _id : newUser._id,
+        //     profileImage: newUser.profileImage
+            
+
+        // }
+
+        // res.status(201).json(
+        //     {
+        //         user : reply,
+        //         message : "Registered Suceesfully"
+        //     }
+        // )
+
+
         
  
     }
     catch (err) {
+    console.log("Register Error:", err);
     return res.status(400).json({
       success: false,
       message: err.message || "Signup failed",
     });
 }
 
+}
+
+const verifyEmail = async (req, res) => {
+  try{
+
+    // email aur otp nikala body se 
+    const {email,otp} = req.body;
+
+    // db me check kia user kahi hai to nhi
+    const user = await User.findOne({email});
+
+    // agar user nhi mila db mei
+      if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // agar user mila aur verified hai
+    if (user.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already verified",
+      });
+    }
+
+    //agar otp nhi aya db 
+    if (!user.emailOtp || !user.emailOtpExpires) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP not found",
+      });
+    }
+
+    // Expired Otp
+    if (Date.now() > user.emailOtpExpires) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired",
+      });
+    }
+
+    // match db otp and req.body otp
+      const isMatch = await bcrypt.compare(String(otp), user.emailOtp);
+
+      if (!isMatch) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid OTP",
+        });
+      }
+    
+    // ye sab pass hogya matlab match user verified and remove otp and expire from db
+
+    user.isVerified = true;
+    user.emailOtp = undefined;
+    user.emailOtpExpires = undefined;
+
+    // update db with isVerified
+    await user.save();
+
+    // token after verification
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.SECRET_KEY,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      // sameSite: "none",
+      // secure: true,
+      // dev
+        sameSite: "lax",
+        secure: false,
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
+  }
+
+  catch(err){
+    // console.log("Verification:", err);
+    res.status(400).send({
+      success: false,
+      message: err.message || "Verification failed",
+    })
+  }
 }
 
 const login = async(req,res)=>{
@@ -127,6 +315,40 @@ const login = async(req,res)=>{
         if(!match)
             throw new Error("Invalid Credentials");
 
+        if (!user.isVerified) {
+          const cooldown = await checkOtpCooldown(user.email);
+
+          if (cooldown > 0) {
+            return res.status(429).json({
+              success: false,
+              isVerified: false,
+              email: user.email,
+              message: `Please wait ${cooldown}s before requesting another OTP`,
+              retryAfter: cooldown,
+            });
+          }
+
+          const otp = generateOtp();
+
+          user.emailOtp = await bcrypt.hash(String(otp), 10);
+          user.emailOtpExpires = Date.now() + 10 * 60 * 1000;
+
+          await user.save();
+
+          await sendEmail(
+            user.email,
+            "Verify your CodeBit email",
+            `Your CodeBit OTP is ${otp}. It will expire in 10 minutes.`
+          );
+
+          return res.status(403).json({
+            success: false,
+            isVerified: false,
+            email: user.email,
+            message: "Email not verified. New OTP sent.",
+          });
+        }
+
         //token creation
         // const token = jwt.sign({ _id: user._id, email: user.email , role:user.role} ,process.env.SECRET_KEY, {expiresIn:60*60});
         // res.cookie("token",token,{maxAge: 60*60*1000, httpOnly:true , sameSite: "lax", secure: false,     // REQUIRED (dev only)
@@ -139,15 +361,13 @@ const login = async(req,res)=>{
 
         res.cookie("token", token, {
         maxAge: 24 * 60 * 60 * 1000, //1 day 
-        // secure: true,
-        // sameSite: "none",
         httpOnly: true,
-        sameSite: "none",
-        secure: true,
-        path: "/",
-        // sameSite: "lax",
-        // secure: false, // dev only
+        // sameSite: "none", // pro
+        // secure: true,
         // path: "/",
+        sameSite: "lax",
+        secure: false, // dev only
+        path: "/",
         });
 
 
@@ -600,4 +820,4 @@ const removeProfileImage = async (req, res) => {
 
 
 
-module.exports = {register,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage};
+module.exports = {register,verifyEmail,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage};

@@ -5,9 +5,9 @@ const User = require("../Models/user");
 const userMiddleware = async(req,res,next)=>{
     try{
 
-    console.log("ORIGIN:", req.headers.origin);
-    console.log("COOKIES:", req.cookies);
-    console.log("TOKEN:", req.cookies?.token);
+    // console.log("ORIGIN:", req.headers.origin);
+    // console.log("COOKIES:", req.cookies);
+    // console.log("TOKEN:", req.cookies?.token);
 
         // token nikala req. cookies se
         const {token} = req.cookies;

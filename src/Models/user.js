@@ -67,6 +67,19 @@ const userSchema = new Schema({
         return !this.googleId;
       },
     },
+
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
+
+    emailOtp: {
+        type: String,
+    },
+
+    emailOtpExpires: {
+        type: Date,
+    },
     
     role:{
         type:String,

@@ -1,15 +1,20 @@
 const express = require("express");
 const authRouter = express.Router();
 
-const {register,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage} = require("../Controllers/userAuthenticate");
+const {register,verifyEmail,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage} = require("../Controllers/userAuthenticate");
 const userMiddleware = require ("../Middleware/userMiddleware");
 const adminMiddleware = require("../Middleware/adminMiddleware");
+const {signupLimiter,verifyOtpLimiter} = require('../Middleware/signupLimmiter');
 const User = require("../Models/user")
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/sendEmail");
 
 
 // Register
-authRouter.post("/register" , register);
+authRouter.post("/register" ,signupLimiter, register);
+
+//verify-otp
+authRouter.post("/verify-email" ,verifyOtpLimiter, verifyEmail);
 
 // Login
 authRouter.post("/login" , login);
@@ -82,7 +87,7 @@ authRouter.get("/me", async (req, res) => {
 
     res.json({ user }); //
     // console.log("ME USER:", user);
-    console.log(req.cookies);
+    // console.log(req.cookies);
   } catch (err) {
     // console.log(err.message); 
     res.status(401).json({ message: "Invalid token" });

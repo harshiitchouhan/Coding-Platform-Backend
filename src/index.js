@@ -67,6 +67,7 @@ const adminRouter = require("./Routes/adminUserRoutes");
 const contestRouter = require("./Routes/contestRoutes");
 const googleRouter = require("./Routes/googleRoute");
 const passport = require("./config/passport");
+const sendEmail = require("./utils/sendEmail");
 const cors = require("cors");
 
 
@@ -86,6 +87,7 @@ app.use(cors({
   },
   credentials: true,
 }));
+
 
 app.use(express.json());
 app.use(cookieParser());
