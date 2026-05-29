@@ -10,7 +10,7 @@ const userMiddleware = async(req,res,next)=>{
     console.log("TOKEN:", req.cookies?.token);
 
         // token nikala req. cookies se
-        const {token} = req.cookies;
+        const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
         // token nhi mila
         if(!token){
             throw new Error("Token Doesn't Exist")
