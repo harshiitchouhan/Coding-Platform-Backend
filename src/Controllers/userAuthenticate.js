@@ -137,18 +137,18 @@ const register = async(req,res)=>{
             newUser.email,
             "CodeBit Email Verification",
 `
-  Hi ${newUser.name},
-  Welcome back to CodeBit 🚀
+Hi ${newUser.name},
+Welcome back to CodeBit 🚀
 
-  Use the OTP below to verify your email address:
-  ${otp}
+Use the OTP below to verify your email address:
+${otp}
 
-  ⏳ This code will expire in 10 minutes.
+⏳ This code will expire in 10 minutes.
 
-  If you did not request this, please ignore this email.
+If you did not request this, please ignore this email.
 
-  Happy Coding 💻
-  Team CodeBit
+Happy Coding 💻
+Team CodeBit
 `
             );
 
