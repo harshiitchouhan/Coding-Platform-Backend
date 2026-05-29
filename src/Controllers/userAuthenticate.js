@@ -134,10 +134,25 @@ const register = async(req,res)=>{
 
         
         await sendEmail(
-          email,
-          "Verify your CodeBit email",
-          `Your CodeBit OTP is ${otp}. It will expire in 10 minutes.`
-        );
+            user.email,
+            "CodeBit Email Verification",
+          `
+            Hi ${user.name},
+
+            Welcome back to CodeBit 🚀
+
+            Use the OTP below to verify your email address:
+
+            ${otp}
+
+            ⏳ This code will expire in 10 minutes.
+
+            If you did not request this, please ignore this email.
+
+            Happy Coding 💻
+            Team CodeBit
+          `
+            );
 
         return res.status(201).json({
           success: true,
