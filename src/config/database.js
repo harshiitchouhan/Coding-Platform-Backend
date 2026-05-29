@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-const mongoose = require("mongoose");
-
 async function main() {
   if (mongoose.connection.readyState >= 1) {
     return; // reuse existing connection
