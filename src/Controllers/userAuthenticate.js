@@ -134,10 +134,10 @@ const register = async(req,res)=>{
 
         
         await sendEmail(
-            user.email,
+            newUser.email,
             "CodeBit Email Verification",
           `
-            Hi ${user.name},
+            Hi ${newUser.name},
 
             Welcome back to CodeBit 🚀
 
