@@ -100,19 +100,19 @@ app.get("/", (req, res) => {
   });
 });
 
-// app.use(async (req, res, next) => {
-//   try {
-//     await main();
-//     next();
-//   } catch (err) {
-//     console.log("DB middleware error:", err.message);
-//     res.status(500).json({
-//       success: false,
-//       message: "Database connection failed",
-//       error: err.message,
-//     });
-//   }
-// });
+app.use(async (req, res, next) => {
+  try {
+    await main();
+    next();
+  } catch (err) {
+    console.log("DB middleware error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+      error: err.message,
+    });
+  }
+});
 
 app.use("/user", authRouter);
 app.use("/problem", problemRouter);
@@ -123,14 +123,14 @@ app.use("/admin", adminRouter);
 app.use("/contest", contestRouter);
 app.use("/auth",googleRouter);
 
-// global error middleware
-app.use((err, req, res, next) => {
-  console.error("Global error:", err.message);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Internal server error",
-  });
-});
+// // global error middleware
+// app.use((err, req, res, next) => {
+//   console.error("Global error:", err.message);
+//   res.status(err.status || 500).json({
+//     success: false,
+//     message: err.message || "Internal server error",
+//   });
+// });
 
 const InitializeConnection = async () => {
   try {
