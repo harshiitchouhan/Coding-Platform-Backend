@@ -2,7 +2,7 @@ const User = require("../Models/user");
 const bcrypt = require("bcrypt");
 const validate = require("../Utils/validate");
 const jwt = require("jsonwebtoken");
-const { redisClient } = require("../config/redis");
+const { redisClient , connectRedis } = require("../config/redis");
 const Submission = require("../Models/submission");
 const Problem = require("../Models/problems")
 const cloudinary = require("cloudinary").v2;
@@ -480,6 +480,10 @@ const logout = async (req, res) => {
 
     if (token) {
       const payload = jwt.decode(token);
+
+    if (!redisClient.isOpen) {
+      await connectRedis();
+    }
 
       if (payload?.exp) {
         await redisClient.set(`token:${token}`, "Blocked");
