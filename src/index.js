@@ -55,7 +55,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
-app.set("trust proxy", 1);
+app.set("trust proxy", 1); // express-rate-limiter header
 
 const main = require("./config/database");
 const cookieParser = require("cookie-parser");
@@ -102,19 +102,19 @@ app.get("/", (req, res) => {
   });
 });
 
-// app.use(async (req, res, next) => {
-//   try {
-//     await main();
-//     next();
-//   } catch (err) {
-//     console.log("DB middleware error:", err.message);
-//     res.status(500).json({
-//       success: false,
-//       message: "Database connection failed",
-//       error: err.message,
-//     });
-//   }
-// });
+app.use(async (req, res, next) => {
+  try {
+    await main();
+    next();
+  } catch (err) {
+    console.log("DB middleware error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+      error: err.message,
+    });
+  }
+});
 
 app.use("/user", authRouter);
 app.use("/problem", problemRouter);
@@ -128,7 +128,7 @@ app.use("/auth",googleRouter);
 
 const InitializeConnection = async () => {
   try {
-    await main();
+    // await main();
 
     await connectRedis();
 
