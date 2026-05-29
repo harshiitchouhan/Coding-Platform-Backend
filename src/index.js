@@ -55,6 +55,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+app.set("trust proxy", 1);
+
 const main = require("./config/database");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./Routes/userAuth");

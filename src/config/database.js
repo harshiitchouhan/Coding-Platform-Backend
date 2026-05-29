@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+isConnected = false;
+
 async function main() {
 
   console.log("Connecting MongoDB...");
