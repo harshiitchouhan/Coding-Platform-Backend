@@ -136,22 +136,20 @@ const register = async(req,res)=>{
         await sendEmail(
             newUser.email,
             "CodeBit Email Verification",
-          `
-            Hi ${newUser.name},
+`
+  Hi ${newUser.name},
+  Welcome back to CodeBit 🚀
 
-            Welcome back to CodeBit 🚀
+  Use the OTP below to verify your email address:
+  ${otp}
 
-            Use the OTP below to verify your email address:
+  ⏳ This code will expire in 10 minutes.
 
-            ${otp}
+  If you did not request this, please ignore this email.
 
-            ⏳ This code will expire in 10 minutes.
-
-            If you did not request this, please ignore this email.
-
-            Happy Coding 💻
-            Team CodeBit
-          `
+  Happy Coding 💻
+  Team CodeBit
+`
             );
 
         return res.status(201).json({
@@ -368,22 +366,20 @@ const login = async(req,res)=>{
           await sendEmail(
             user.email,
             "CodeBit Email Verification",
-                `
-              Hi ${user.name},
+`
+Hi ${user.name},
+Welcome back to CodeBit 🚀
 
-              Welcome back to CodeBit 🚀
+Use the OTP below to verify your email address:
+${otp}
 
-              Use the OTP below to verify your email address:
+⏳ This code will expire in 10 minutes.
 
-              ${otp}
+If you did not request this, please ignore this email.
 
-              ⏳ This code will expire in 10 minutes.
-
-              If you did not request this, please ignore this email.
-
-              Happy Coding 💻
-              Team CodeBit
-                `
+Happy Coding 💻
+Team CodeBit
+`
             );
 
           return res.status(403).json({
