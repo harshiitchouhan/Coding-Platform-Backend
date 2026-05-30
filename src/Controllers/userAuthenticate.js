@@ -467,7 +467,7 @@ const forgetPassword = async(req,res)=>{
           </p>
 
           <p style="text-align: center; margin: 32px 0;">
-            
+            <a
               href="${resetUrl}"
               style="
                 background-color: #0ea5e9;
