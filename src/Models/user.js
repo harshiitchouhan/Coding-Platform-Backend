@@ -9,11 +9,6 @@ const userSchema = new Schema({
         maxLength : 20
     },
 
-    LastName: {
-        type : String,
-        maxLength : 15
-    },
-
     email:{
         type : String,
         required : true,
@@ -66,6 +61,14 @@ const userSchema = new Schema({
       required: function () {
         return !this.googleId;
       },
+    },
+
+    resetPasswordToken: {
+        type: String,
+    },
+
+    resetPasswordExpires: {
+        type: Date,
     },
 
     isVerified:{

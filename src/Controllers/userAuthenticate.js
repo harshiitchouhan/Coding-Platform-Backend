@@ -306,6 +306,129 @@ const verifyEmail = async (req, res) => {
   }
 }
 
+const forgetPassword = async(req,res)=>{
+  try{
+    const {email} = req.body;
+
+    if(!email){
+      res.status(400).json({
+        success:"false",
+        message:"Email is Required"
+      })
+    }
+
+    const user = await User.findOne({email});
+    if(!user){
+      return res.status(200).json({
+        success: true,
+        message: "If an account exists with this email, a reset link has been sent.",
+      });
+    }
+    if (user.googleId) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "This account uses Google Sign-In. Please continue with Google.",
+    });
+  }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+
+    await user.save();
+
+        const frontendUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://codebit-dev.vercel.app"
+        : "http://localhost:5173";
+
+    const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+
+    await sendEmail(
+      user.email,
+      "Reset Your CodeBit Password",
+      `Reset your password using this link: ${resetUrl}`,
+      `
+        <h2>Password Reset Request</h2>
+        <p>You requested a password reset for your CodeBit account.</p>
+
+        <a href="${resetUrl}">
+          Reset Password
+        </a>
+
+        <p>This link expires in 10 minutes.</p>
+      `
+    );
+
+    return res.status(200).json({
+      success: true,
+      token: resetToken, // temporary for testing
+    });
+
+
+  }
+  catch(err)
+  {
+    console.log("Forgot Password Error:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
+const resetPassword = async (req, res) => {
+  try {
+    // console.log(req.body);
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
+      });
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired reset token",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+
+  } catch (error) {
+    console.log("Reset Password Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 const login = async(req,res)=>{
     
     try {
@@ -864,4 +987,4 @@ const removeProfileImage = async (req, res) => {
 
 
 
-module.exports = {register,verifyEmail,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage};
+module.exports = {register,verifyEmail,forgetPassword,resetPassword,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage};

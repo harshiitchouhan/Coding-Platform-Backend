@@ -1,7 +1,7 @@
 const express = require("express");
 const authRouter = express.Router();
 
-const {register,verifyEmail,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage} = require("../Controllers/userAuthenticate");
+const {register,verifyEmail,forgetPassword,resetPassword,login,logout,adminRegister,deleteProfile,getProfile,editProfile,saveProfileImageMetaData,generateProfileImageSignature,removeProfileImage,} = require("../Controllers/userAuthenticate");
 const userMiddleware = require ("../Middleware/userMiddleware");
 const adminMiddleware = require("../Middleware/adminMiddleware");
 const {signupLimiter,verifyOtpLimiter} = require('../Middleware/signupLimmiter');
@@ -15,6 +15,12 @@ authRouter.post("/register" ,signupLimiter, register);
 
 //verify-otp
 authRouter.post("/verify-email" ,verifyOtpLimiter, verifyEmail);
+
+// forget-pass
+authRouter.post("/forget-password" , forgetPassword);
+
+// reset-password
+authRouter.post("/reset-password/:token" , resetPassword);
 
 // Login
 authRouter.post("/login" , login);
@@ -68,11 +74,11 @@ authRouter.get("/me", async (req, res) => {
     if (!token) {
       return res.status(401).json({ message: "Token doesn't exist" });
     }
-    console.log("Token:", token);
+    // console.log("Token:", token);
 
     const payload = jwt.verify(token, process.env.SECRET_KEY);
     const { _id } = payload;
-    console.log("Payload:", payload);
+    // console.log("Payload:", payload);
 
     if (!_id) {
       return res.status(401).json({ message: "Invalid token" });
