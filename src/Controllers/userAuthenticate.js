@@ -69,25 +69,75 @@ const register = async(req,res)=>{
               await userExist.save();
 
               await sendEmail(
-              userExist.email,
-              "CodeBit Email Verification",
-              `
-                Hi ${userExist.name},
+                userExist.email,
+                "CodeBit Email Verification",
+                `Hi ${userExist.name}, your CodeBit verification code is: ${otp}`,
+                `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
 
-                Welcome to CodeBit 🚀
+                    <p>Hello ${userExist.name},</p>
 
-                Use the OTP below to verify your email address:
+                    <p>
+                      Welcome to CodeBit! We're excited to have you on board. To complete your
+                      registration and verify your email address, please use the one-time code below.
+                    </p>
 
-                ${otp}
+                    <p>
+                      We take the security of your account seriously. Our security team has logged
+                      this verification request and will monitor your account for any unusual activity.
+                    </p>
 
-                ⏳ This code will expire in 10 minutes.
+                    <p>Your email verification code is:</p>
 
-                If you did not request this, please ignore this email.
+                    <div style="text-align: center; margin: 32px 0;">
+                      <div style="
+                        display: inline-block;
+                        background-color: #f0f9ff;
+                        border: 2px dashed #0ea5e9;
+                        border-radius: 12px;
+                        padding: 20px 48px;
+                        font-size: 36px;
+                        font-weight: bold;
+                        letter-spacing: 12px;
+                        color: #0ea5e9;
+                      ">
+                        ${otp}
+                      </div>
+                    </div>
 
-                Happy Coding 💻
-                Team CodeBit
-                  `
-            );
+                    <p>
+                      This code is valid for <strong>10 minutes</strong>. For your security, please
+                      do not share this code with anyone. Our support team will never ask you for
+                      your password or this code.
+                    </p>
+
+                    <p>
+                      If you did not create a CodeBit account, please ignore this email. No account
+                      will be created and your inbox is safe.
+                    </p>
+
+                    <p>
+                      If you have any questions or concerns in the meantime, please don't hesitate to
+                      reply to this email. Our support team is available 24/7 to assist you.
+                    </p>
+
+                    <p>
+                      Happy Coding 💻<br/>
+                      <strong>CodeBit Support Team</strong>
+                    </p>
+
+                    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+
+                    <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                      CodeBit, Inc. and affiliates<br/>
+                      CodeBit, Inc. is a registered trademark. This message was produced and distributed
+                      by CodeBit, Inc. or its affiliates.<br/>
+                      © ${new Date().getFullYear()}, CodeBit, Inc. or its affiliates. All rights reserved.
+                    </p>
+
+                  </div>
+                `
+              );
 
               return res.status(200).json({
                 success: true,
@@ -132,25 +182,76 @@ const register = async(req,res)=>{
         emailOtpExpires: Date.now() + 10 * 60 * 1000,
         });
 
-        
         await sendEmail(
-            newUser.email,
-            "CodeBit Email Verification",
-`
-Hi ${newUser.name},
-Welcome back to CodeBit 🚀
+  newUser.email,
+  "CodeBit Email Verification",
+  `Hi ${newUser.name}, your CodeBit verification code is: ${otp}`,
+  `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
 
-Use the OTP below to verify your email address:
-${otp}
+      <p>Hello ${newUser.name},</p>
 
-⏳ This code will expire in 10 minutes.
+      <p>
+        Welcome to CodeBit! We're excited to have you on board. To complete your
+        registration and verify your email address, please use the one-time code below.
+      </p>
 
-If you did not request this, please ignore this email.
+      <p>
+        We take the security of your account seriously. Our security team has logged
+        this verification request and will monitor your account for any unusual activity.
+      </p>
 
-Happy Coding 💻
-Team CodeBit
-`
-            );
+      <p>Your email verification code is:</p>
+
+      <div style="text-align: center; margin: 32px 0;">
+        <div style="
+          display: inline-block;
+          background-color: #f0f9ff;
+          border: 2px dashed #0ea5e9;
+          border-radius: 12px;
+          padding: 20px 48px;
+          font-size: 36px;
+          font-weight: bold;
+          letter-spacing: 12px;
+          color: #0ea5e9;
+        ">
+          ${otp}
+        </div>
+      </div>
+
+      <p>
+        This code is valid for <strong>10 minutes</strong>. For your security, please
+        do not share this code with anyone. Our support team will never ask you for
+        your password or this code.
+      </p>
+
+      <p>
+        If you did not create a CodeBit account, please ignore this email. No account
+        will be created and your inbox is safe.
+      </p>
+
+      <p>
+        If you have any questions or concerns in the meantime, please don't hesitate to
+        reply to this email. Our support team is available 24/7 to assist you.
+      </p>
+
+      <p>
+        Happy Coding 💻<br/>
+        <strong>CodeBit Support Team</strong>
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+
+      <p style="font-size: 12px; color: #6b7280; text-align: center;">
+        CodeBit, Inc. and affiliates<br/>
+        CodeBit, Inc. is a registered trademark. This message was produced and distributed
+        by CodeBit, Inc. or its affiliates.<br/>
+        © ${new Date().getFullYear()}, CodeBit, Inc. or its affiliates. All rights reserved.
+      </p>
+
+    </div>
+  `
+        );
 
         return res.status(201).json({
           success: true,
@@ -351,14 +452,70 @@ const forgetPassword = async(req,res)=>{
       "Reset Your CodeBit Password",
       `Reset your password using this link: ${resetUrl}`,
       `
-        <h2>Password Reset Request</h2>
-        <p>You requested a password reset for your CodeBit account.</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
 
-        <a href="${resetUrl}">
-          Reset Password
-        </a>
+          <p>Hello there,</p>
 
-        <p>This link expires in 10 minutes.</p>
+          <p>
+            We received a request to reset the password associated with your CodeBit account.
+            If you made this request, please use the link below to proceed with resetting your password.
+          </p>
+
+          <p>
+            We take the security of your account seriously. Our security team has logged this
+            password reset request and will monitor your account for any unusual activity.
+          </p>
+
+          <p style="text-align: center; margin: 32px 0;">
+            
+              href="${resetUrl}"
+              style="
+                background-color: #0ea5e9;
+                color: #ffffff;
+                padding: 14px 32px;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 16px;
+                display: inline-block;
+              "
+            >
+              Reset Password
+            </a>
+          </p>
+
+          <p>
+            This link is valid for <strong>10 minutes</strong>. For your security, please do not
+            share this link with anyone. Our support team will never ask you for your password
+            or this link.
+          </p>
+
+          <p>
+            If you did not request a password reset, please ignore this email. Your password
+            will remain unchanged and your account is safe. We recommend keeping an eye on
+            your email inbox for any further updates regarding your account status.
+          </p>
+
+          <p>
+            If you have any questions or concerns in the meantime, please don't hesitate to
+            reply to this email. Our support team is available 24/7 to assist you.
+          </p>
+
+          <p>
+            Best regards,<br/>
+            <strong>CodeBit Support Team</strong>
+          </p>
+
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+
+          <p style="font-size: 12px; color: #6b7280; text-align: center;">
+            CodeBit, Inc. and affiliates<br/>
+            CodeBit, Inc. is a registered trademark. This message was produced and distributed
+            by CodeBit, Inc. or its affiliates.<br/>
+            © ${new Date().getFullYear()}, CodeBit, Inc. or its affiliates. All rights reserved.
+          </p>
+
+        </div>
       `
     );
 
@@ -489,21 +646,73 @@ const login = async(req,res)=>{
           await sendEmail(
             user.email,
             "CodeBit Email Verification",
-`
-Hi ${user.name},
-Welcome back to CodeBit 🚀
+            `Hi ${user.name}, your CodeBit verification code is: ${otp}`,
+            `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
 
-Use the OTP below to verify your email address:
-${otp}
+                <p>Hello ${user.name},</p>
 
-⏳ This code will expire in 10 minutes.
+                <p>
+                  Welcome back to CodeBit! It looks like your email address hasn't been verified yet.
+                  Please use the one-time code below to verify your email and continue to your account.
+                </p>
 
-If you did not request this, please ignore this email.
+                <p>
+                  We take the security of your account seriously. Our security team has logged
+                  this verification request and will monitor your account for any unusual activity.
+                </p>
 
-Happy Coding 💻
-Team CodeBit
-`
-            );
+                <p>Your email verification code is:</p>
+
+                <div style="text-align: center; margin: 32px 0;">
+                  <div style="
+                    display: inline-block;
+                    background-color: #f0f9ff;
+                    border: 2px dashed #0ea5e9;
+                    border-radius: 12px;
+                    padding: 20px 48px;
+                    font-size: 36px;
+                    font-weight: bold;
+                    letter-spacing: 12px;
+                    color: #0ea5e9;
+                  ">
+                    ${otp}
+                  </div>
+                </div>
+
+                <p>
+                  This code is valid for <strong>10 minutes</strong>. For your security, please
+                  do not share this code with anyone. Our support team will never ask you for
+                  your password or this code.
+                </p>
+
+                <p>
+                  If you did not attempt to log in to CodeBit, please ignore this email. Your
+                  account will remain unchanged and your inbox is safe.
+                </p>
+
+                <p>
+                  If you have any questions or concerns in the meantime, please don't hesitate to
+                  reply to this email. Our support team is available 24/7 to assist you.
+                </p>
+
+                <p>
+                  Happy Coding 💻<br/>
+                  <strong>CodeBit Support Team</strong>
+                </p>
+
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+
+                <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                  CodeBit, Inc. and affiliates<br/>
+                  CodeBit, Inc. is a registered trademark. This message was produced and distributed
+                  by CodeBit, Inc. or its affiliates.<br/>
+                  © ${new Date().getFullYear()}, CodeBit, Inc. or its affiliates. All rights reserved.
+                </p>
+
+              </div>
+            `
+          );
 
           return res.status(403).json({
             success: false,
