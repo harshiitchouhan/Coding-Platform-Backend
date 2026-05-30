@@ -8,13 +8,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async (to, subject, text) => {
+const sendEmail = async (to, subject, text, html) => {
   try {
     const info = await transporter.sendMail({
       from: `"CodeBit" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       text,
+      html,
     });
 
     console.log("Email sent:", info.messageId);
