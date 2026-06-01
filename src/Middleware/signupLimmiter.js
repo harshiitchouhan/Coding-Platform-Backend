@@ -15,10 +15,6 @@ const signupLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-module.exports = {
-  signupLimiter,
-};
-
 //verify limit
 const verifyOtpLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // matches OTP expiry window
