@@ -764,6 +764,7 @@ const login = async(req,res)=>{
     }
     catch(err)
     {
+    console.error("Login Error",err);
     res.status(401).json({
       success: false,
       message: err.message
