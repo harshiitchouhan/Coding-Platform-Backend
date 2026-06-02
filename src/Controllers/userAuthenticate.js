@@ -755,6 +755,7 @@ const login = async(req,res)=>{
         res.status(201).json(
             {
                 user : reply,
+                token,
                 message : "Logged in Suceesfully"
             }
         );
