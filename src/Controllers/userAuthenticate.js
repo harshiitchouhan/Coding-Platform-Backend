@@ -1006,6 +1006,7 @@ const getProfile = async (req, res) => {
     });
 
   } catch (err) {
+    console.error("Profile Error", err);
     res.status(500).json({
       success: false,
       message: err.message,
