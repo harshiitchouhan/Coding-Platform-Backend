@@ -6,7 +6,7 @@ const adminMiddleware = async(req,res,next)=>{
     try{
 
         // const {token} = req.cookies;
-         console.log("TOKEN:", req.cookies?.token || req.headers.authorization?.split(" ")[1]);
+        //  console.log("TOKEN:", req.cookies?.token || req.headers.authorization?.split(" ")[1]);
         const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
         if(!token){
             throw new Error("Token Doesn't Exist")
