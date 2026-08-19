@@ -533,6 +533,10 @@ let ${p.name} = parseInput(input[${i}]);
 if (isLinkedListParam("${p.name}")) {
   ${p.name} = buildLinkedList(${p.name});
 }
+
+if (isTreeParam("${p.name}")) {
+  ${p.name} = buildTree(${p.name});
+}
 `;
   });
 
@@ -586,6 +590,17 @@ function isLinkedListParam(name) {
     name === "list1" ||
     name === "list2" ||
     name.toLowerCase().includes("list")
+  );
+}
+
+function isTreeParam(name) {
+  return (
+    name === "root" ||
+    name === "tree" ||
+    name === "p" ||
+    name === "q" ||
+    name.toLowerCase().includes("tree") ||
+    name.toLowerCase().includes("root")
   );
 }
 
