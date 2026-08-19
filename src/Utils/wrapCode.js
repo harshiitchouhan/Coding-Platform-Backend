@@ -235,7 +235,7 @@ vector<string> parseTreeTokens(string line) {
 TreeNode* buildTree(string line) {
     vector<string> nodes = parseTreeTokens(line);
 
-    if (nodes.empty() || nodes[0] == "null") return NULL;
+    if (nodes.empty() || nodes[0] == "null" || nodes[0] == "") return NULL;
 
     TreeNode* root = new TreeNode(stoi(nodes[0]));
     queue<TreeNode*> q;
@@ -247,13 +247,13 @@ TreeNode* buildTree(string line) {
         TreeNode* curr = q.front();
         q.pop();
 
-        if (i < nodes.size() && nodes[i] != "null") {
+        if (i < nodes.size() && nodes[i] != "null" && !nodes[i].empty()) {
             curr->left = new TreeNode(stoi(nodes[i]));
             q.push(curr->left);
         }
         i++;
 
-        if (i < nodes.size() && nodes[i] != "null") {
+        if (i < nodes.size() && nodes[i] != "null" && !nodes[i].empty()) {
             curr->right = new TreeNode(stoi(nodes[i]));
             q.push(curr->right);
         }
@@ -262,7 +262,7 @@ TreeNode* buildTree(string line) {
 
     return root;
 }
-
+    
 vector<string> treeToVector(TreeNode* root) {
     vector<string> result;
 
@@ -836,36 +836,35 @@ class Parser {
     }
 
     static TreeNode buildTree(String line) {
-        ArrayList<String> nodes = parseTreeTokens(line);
+    ArrayList<String> nodes = parseTreeTokens(line);
 
-        if (nodes.size() == 0 || nodes.get(0).equals("null")) return null;
+    if (nodes.size() == 0 || nodes.get(0).equals("null") || nodes.get(0).isEmpty()) return null;
 
-        TreeNode root = new TreeNode(Integer.parseInt(nodes.get(0)));
+    TreeNode root = new TreeNode(Integer.parseInt(nodes.get(0)));
 
-        Queue<TreeNode> q = new LinkedList<>();
-        q.add(root);
+    Queue<TreeNode> q = new LinkedList<>();
+    q.add(root);
 
-        int i = 1;
+    int i = 1;
 
-        while (!q.isEmpty() && i < nodes.size()) {
-            TreeNode curr = q.poll();
+    while (!q.isEmpty() && i < nodes.size()) {
+        TreeNode curr = q.poll();
 
-            if (i < nodes.size() && !nodes.get(i).equals("null")) {
-                curr.left = new TreeNode(Integer.parseInt(nodes.get(i)));
-                q.add(curr.left);
-            }
-            i++;
-
-            if (i < nodes.size() && !nodes.get(i).equals("null")) {
-                curr.right = new TreeNode(Integer.parseInt(nodes.get(i)));
-                q.add(curr.right);
-            }
-            i++;
+        if (i < nodes.size() && !nodes.get(i).equals("null") && !nodes.get(i).isEmpty()) {
+            curr.left = new TreeNode(Integer.parseInt(nodes.get(i)));
+            q.add(curr.left);
         }
+        i++;
 
-        return root;
+        if (i < nodes.size() && !nodes.get(i).equals("null") && !nodes.get(i).isEmpty()) {
+            curr.right = new TreeNode(Integer.parseInt(nodes.get(i)));
+            q.add(curr.right);
+        }
+        i++;
     }
 
+    return root;
+}
     static String treeToString(TreeNode root) {
         if (root == null) return "[]";
 
