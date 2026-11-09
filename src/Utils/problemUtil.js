@@ -43,11 +43,19 @@ const submitBatch = async (submission)=>{
 
 }
 
-const waiting = async(timer)=>{
-    setTimeout(()=>{
-        return 1;
-    },timer)
-}
+// Change it
+
+// const waiting = async(timer)=>{
+//     setTimeout(()=>{
+//         return 1;
+//     },timer)
+// }
+
+const waiting = (timer) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, timer);
+    });
+};
 
 const submitToken = async (resultToken)=>{
 

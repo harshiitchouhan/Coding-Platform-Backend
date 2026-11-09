@@ -518,6 +518,179 @@ int main() {
 `;
 }
 
+// /* ================= EDIT FOR TREE ================ */
+// /* ================= JAVASCRIPT ================= */
+
+// function wrapJS(code, functionName, params) {
+//   let parsing = "";
+//   const names = [];
+
+//   params.forEach((p, i) => {
+//     names.push(p.name);
+
+//     parsing += `
+// let ${p.name} = parseInput(input[${i}]);
+
+// if (isLinkedListParam("${p.name}")) {
+//   ${p.name} = buildLinkedList(${p.name});
+// }
+// `;
+//   });
+
+//   return `
+// ${code}
+
+// const fs = require("fs");
+
+// const raw = fs.readFileSync(0, "utf-8").trim();
+// const input = raw.length ? raw.split("\\n").map(x => x.trim()).filter(Boolean) : [];
+
+// function ListNode(val) {
+//   this.val = val;
+//   this.next = null;
+// }
+
+// function TreeNode(val) {
+//   this.val = val;
+//   this.left = null;
+//   this.right = null;
+// }
+
+// function parseInput(value) {
+//   if (value === undefined) return undefined;
+
+//   if (value === "true") return true;
+//   if (value === "false") return false;
+
+//   if (
+//     (value.startsWith("[") && value.endsWith("]")) ||
+//     (value.startsWith("{") && value.endsWith("}"))
+//   ) {
+//     return JSON.parse(value);
+//   }
+
+//   if (!isNaN(Number(value))) return Number(value);
+
+//   if (
+//     (value.startsWith('"') && value.endsWith('"')) ||
+//     (value.startsWith("'") && value.endsWith("'"))
+//   ) {
+//     return value.slice(1, -1);
+//   }
+
+//   return value;
+// }
+
+// function isLinkedListParam(name) {
+//   return (
+//     name === "head" ||
+//     name === "list1" ||
+//     name === "list2" ||
+//     name.toLowerCase().includes("list")
+//   );
+// }
+
+// function buildLinkedList(arr) {
+//   if (!arr || arr.length === 0) return null;
+
+//   let head = new ListNode(arr[0]);
+//   let temp = head;
+
+//   for (let i = 1; i < arr.length; i++) {
+//     temp.next = new ListNode(arr[i]);
+//     temp = temp.next;
+//   }
+
+//   return head;
+// }
+
+// function linkedListToArray(head) {
+//   let result = [];
+
+//   while (head !== null) {
+//     result.push(head.val);
+//     head = head.next;
+//   }
+
+//   return result;
+// }
+
+// function isListNode(value) {
+//   return (
+//     value !== null &&
+//     typeof value === "object" &&
+//     Object.prototype.hasOwnProperty.call(value, "val") &&
+//     Object.prototype.hasOwnProperty.call(value, "next")
+//   );
+// }
+
+// function buildTree(arr) {
+//   if (!arr || arr.length === 0 || arr[0] === null) return null;
+
+//   let root = new TreeNode(arr[0]);
+//   let queue = [root];
+//   let i = 1;
+
+//   while (queue.length && i < arr.length) {
+//     let node = queue.shift();
+
+//     if (i < arr.length && arr[i] !== null) {
+//       node.left = new TreeNode(arr[i]);
+//       queue.push(node.left);
+//     }
+//     i++;
+
+//     if (i < arr.length && arr[i] !== null) {
+//       node.right = new TreeNode(arr[i]);
+//       queue.push(node.right);
+//     }
+//     i++;
+//   }
+
+//   return root;
+// }
+
+// function treeToArray(root) {
+//   if (!root) return [];
+
+//   let result = [];
+//   let queue = [root];
+
+//   while (queue.length) {
+//     let node = queue.shift();
+
+//     if (node === null) {
+//       result.push(null);
+//     } else {
+//       result.push(node.val);
+//       queue.push(node.left);
+//       queue.push(node.right);
+//     }
+//   }
+
+//   while (result.length && result[result.length - 1] === null) {
+//     result.pop();
+//   }
+
+//   return result;
+// }
+
+// ${parsing}
+
+// const result = ${functionName}(${names.join(", ")});
+
+// if (result === undefined) {
+//   console.log("");
+// } else if (isListNode(result)) {
+//   console.log(JSON.stringify(linkedListToArray(result)));
+// } else if (typeof result === "string") {
+//   console.log(result);
+// } else {
+//   console.log(JSON.stringify(result));
+// }
+// `;
+// }
+
 /* ================= JAVASCRIPT ================= */
 
 function wrapJS(code, functionName, params) {

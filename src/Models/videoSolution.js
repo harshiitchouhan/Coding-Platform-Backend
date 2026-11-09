@@ -37,6 +37,7 @@ const videoSchema = new Schema({
         type:Number,
         required:true
     },
+    
     editorial: {
       approach: String,        // explanation of idea
       algorithm: String,       // step-by-step logic

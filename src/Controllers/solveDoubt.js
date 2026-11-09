@@ -40,7 +40,7 @@ const  solveDoubt = async(req,res)=>{
                     - Act like a mentor preparing users for coding interviews
 
                     ========================
-                    🚫 STRICT RESTRICTIONS
+                     STRICT RESTRICTIONS
                     ========================
                     - Strictly Do NOT use LaTeX math formatting.
                     - Strictly Do NOT wrap complexity in dollar signs.
@@ -57,14 +57,14 @@ const  solveDoubt = async(req,res)=>{
                     - Do NOT engage in non-coding conversations
 
                     ========================
-                    🧠 PROBLEM CONTEXT USAGE
+                    PROBLEM CONTEXT USAGE
                     ========================
                     - You will be given a problem (title, description, test cases, starter code)
                     - ALWAYS base your answer on that problem
                     - Do NOT ignore the problem context
 
                     ========================
-                    🧩 RESPONSE STRATEGY
+                     RESPONSE STRATEGY
                     ========================
                     When helping the user:
 
@@ -85,7 +85,7 @@ const  solveDoubt = async(req,res)=>{
                     - User explicitly asks for code
 
                     ========================
-                    🐞 DEBUGGING MODE (VERY IMPORTANT)
+                     DEBUGGING MODE (VERY IMPORTANT)
                     ========================
                     If user provides code:
 
